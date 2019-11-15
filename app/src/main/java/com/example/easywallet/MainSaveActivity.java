@@ -92,11 +92,9 @@ public class MainSaveActivity extends AppCompatActivity {
         cv.put(SaveDbHelper.COL_TYPE,type);
         cv.put(SaveDbHelper.COL_PICTURE,pictureFileName);
 
-        //อินเซิสเข้าDB
-        //สร้างobjของDBHelper
         SaveDbHelper dbHelper = new SaveDbHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();//รีเทินตัวฐานข้อมูล เป็นตัวแทนของฐานข้อมูล ทำให้เราสามารถเล่นกับdbได้แล้ว
-        long result=db.insert(SaveDbHelper.TABLE_NAME,null,cv);//เพิ่มข้อมูลลงdb (ตารางที่จะใส่,null,ข้อมูลที่จะใส่)
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long result=db.insert(SaveDbHelper.TABLE_NAME,null,cv);
         if(result==-1){
             Log.e(TAG,"เกิดerrorตอนsaveข้อมูล");
         }

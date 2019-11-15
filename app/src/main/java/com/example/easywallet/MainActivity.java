@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.easywallet.Db.SaveDbHelper;
 import com.example.easywallet.adapter.SaveListAdapter;
@@ -21,8 +22,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     Button mSaveAddButton,mSaveExitButton;
-    private SaveDbHelper mHelper;//เข้าถึงdb โดยการสร้างตารางDB
-    private SQLiteDatabase mDb;//ตัวอ้างอิงdb
+    private SaveDbHelper mHelper;
+    private SQLiteDatabase mDb;
     private ArrayList<SaveItem> mSaveItemsList = new ArrayList<>();
     TextView mLeftTextView;
     private SaveListAdapter mAdapter;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toast toast = Toast.makeText(MainActivity.this,"Welcome to pig wallet appication!",Toast.LENGTH_SHORT);
+        toast.show();
         mSaveAddButton = findViewById(R.id.save_add_button);
         mSaveExitButton = findViewById(R.id.save_exit_button);
         mLeftTextView = findViewById(R.id.Left_textView);
@@ -40,16 +43,16 @@ public class MainActivity extends AppCompatActivity {
         loadDataFromDb();
         mAdapter = new SaveListAdapter(
                 this,
-                R.layout.item,//<4>layout->new->layout reso->จะได้item.xml  <5>สร้างแพคเกจ adapter -> สร้างPhoneListAdapter.class
+                R.layout.item,
                 mSaveItemsList
         );
 
         ListView iv = findViewById(R.id.list_View);
         iv.setAdapter(mAdapter);
-        //(11)มีการลบได้เมือกดค้างที่ไอเทม
+
         iv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view,final int position, long l) {//positionคือตัวที่เราเลือกเช่นเลือกแจ่งเหตุด่วนเหตุร้ายคือ0
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view,final int position, long l) {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
                 SaveItem item = mSaveItemsList.get(position);
                 dialog.setTitle("ยืนยันลบรายการ "+item.title+" "+item.number+" บาท");
@@ -58,21 +61,21 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         SaveItem item = mSaveItemsList.get(position);
                         int phoneId=item.id;
-                        //String[] args = new String[]{String.valueOf(phoneId)};
+
                         mDb.delete(
                                 SaveDbHelper.TABLE_NAME,
-                                SaveDbHelper.COL_ID+"=?",//คอลัมเงือนไขตัวที่จะลบ    _id=? AND picture=?"
-                                new String[]{String.valueOf(phoneId)}//?คือphoneId ก็คือargsนั้นหละ  (phoneID,"number0001.jpg")
+                                SaveDbHelper.COL_ID+"=?",
+                                new String[]{String.valueOf(phoneId)}
                         );
-                        loadDataFromDb();//โหลดDB
-                        mAdapter.notifyDataSetChanged();//บอกให้อแดปเตอรู้
+                        loadDataFromDb();
+                        mAdapter.notifyDataSetChanged();
                     }
 
                 });
                 dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //โค้ดที่ต้องการให้ทำงาน เมือปุ่ม OK ใน dialog ถูกคลิค}
+
                     }
 
                 });
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 dialog.show();
                 return true;
             }
-        });//end (11)มีการลบได้เมือกดค้างที่ไอเทม
+        });
         mSaveAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,50 +105,44 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //(7)เข้ามาเมือหน้าปลายทางมรการส่งค่ากลับมา
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==001){
             if(resultCode==RESULT_OK){
-                loadDataFromDb();//โหลดข้อมูลDB(คิวรีข้อมูลจากDBมา)
-                mAdapter.notifyDataSetChanged();//บอกให้อแดปเตอรู้ว่าข้อมูลเปลียนไปแล้วนะ
+                loadDataFromDb();
+                mAdapter.notifyDataSetChanged();
             }
-            //ไป(8)ที่ปลายทาง
         }
         if(requestCode==002){
             if(resultCode==RESULT_OK){
-                loadDataFromDb();//โหลดข้อมูลDB(คิวรีข้อมูลจากDBมา)
-                mAdapter.notifyDataSetChanged();//บอกให้อแดปเตอรู้ว่าข้อมูลเปลียนไปแล้วนะ
+                loadDataFromDb();
+                mAdapter.notifyDataSetChanged();
             }
-            //ไป(8)ที่ปลายทาง
         }
     }
 
-    //CTRL+ALT+M ทำให้สร้างเมธอทจากโค้ดเดิม
     private void loadDataFromDb() {
         Cursor cursor =mDb.query(
-                //CTRT+P เอาแบบ3
+
                 SaveDbHelper.TABLE_NAME,
-                null,//เอามาทุกคอลัม
-                null,//"category=1"  คิวรีเแพาะที่มีค่าแคททากอรีเป็น1เท่ารั้ร
+                null,
+                null,
                 null,
                 null,
                 null,
                 null
         );
         String s = sum;
-        mSaveItemsList.clear();//เคลียข้อมูลเก่าทิ้ง เผือไว้กรณีผู้ใช้แอดข้อมูลเพิ่มมา
-//วนลูปเอาข้อมูลออกมา
+        mSaveItemsList.clear();
         while (cursor.moveToNext()){
             int id = cursor.getInt(cursor.getColumnIndex(SaveDbHelper.COL_ID));
-            String title = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_TITLE));  //getมาแต่ละคอลัมของแถวนั้นๆ หรือcursor.getString(1); ช่อง1ตือtitle
-            String number = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_NUMBER));  //getมาแต่ละคอลัมของแถวนั้นๆ หรือcursor.getString(1); ช่อง1ตือtitle
-            String picture = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_PICTURE));  //getมาแต่ละคอลัมของแถวนั้นๆ หรือcursor.getString(1); ช่อง1ตือtitle
-            String type = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_TYPE));  //getมาแต่ละคอลัมของแถวนั้นๆ หรือcursor.getString(1); ช่อง1ตือtitle
-
-            //สร้างโมเดลobj โดยผ่านคอนสตักจอPhoneItem ที่สร้างไว้
+            String title = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_TITLE));
+            String number = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_NUMBER));
+            String picture = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_PICTURE));
+            String type = cursor.getString(cursor.getColumnIndex(SaveDbHelper.COL_TYPE));
             SaveItem item = new SaveItem(id,title,number,picture,type);
-            mSaveItemsList.add(item);//ข้อมูลขากdbมาอยู่ในนี้หมดแล้ว
+            mSaveItemsList.add(item);
             if(type.equals("1")) {
                 s = String.valueOf((Integer.parseInt(s) + Integer.parseInt(number)));
             }
@@ -154,12 +151,6 @@ public class MainActivity extends AppCompatActivity {
             }
             mLeftTextView.setText(s);
         }
-
-
-
-
-
-
     }
 
-}//end class
+}
