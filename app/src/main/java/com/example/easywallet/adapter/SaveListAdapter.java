@@ -27,7 +27,7 @@ public class SaveListAdapter extends ArrayAdapter<SaveItem> {
     private int mLayoutResId;
     private ArrayList<SaveItem> mPhoneItemList;
 
-    public SaveListAdapter(@NonNull Context context, int layoutResId, @NonNull ArrayList<SaveItem> phoneItenList) {//layoutResIdือlayoutที่จะให้ใช้
+    public SaveListAdapter(@NonNull Context context, int layoutResId, @NonNull ArrayList<SaveItem> phoneItenList) {
         super(context, layoutResId, phoneItenList);
 
         this.mContext=context;
