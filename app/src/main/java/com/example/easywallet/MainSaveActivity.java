@@ -32,7 +32,7 @@ public class MainSaveActivity extends AppCompatActivity {
         mTitleOutEditText=findViewById(R.id.title_out_edit_text);
         mNumberOutEditText =findViewById(R.id.number_out_edit_text);
         mSaveOutButton=findViewById(R.id.save_out_button);
-        Intent intent = getIntent();//getอินเทนที่ส่งมาจากหน้าก่อนหน้านี
+        Intent intent = getIntent();
         String type  = intent.getStringExtra("type");
         String pictureFileName;
         if(type.equals("1")) {
@@ -42,13 +42,13 @@ public class MainSaveActivity extends AppCompatActivity {
         }
             AssetManager am = getAssets();
             try {
-                InputStream stream = am.open(pictureFileName); //เปิดไฟล์โดยใช้AssetManager
-                Drawable drawable=Drawable.createFromStream(stream,null);//แปลงInputStreamเป็น Drawable
-                //สามารถเอาไปsetให้กับรูปภาพได้แล้ว
+                InputStream stream = am.open(pictureFileName); 
+                Drawable drawable=Drawable.createFromStream(stream,null);
+               
                 mSaveOutImageView.setImageDrawable(drawable);
             } catch (IOException e) {
                 e.printStackTrace();
-                //(10)ถ้าเปิดไฟล์ไม่เจอมันอ้างเป็นไฟล์ที่ผู้ใช้แอดมาจึง
+                
                 File pictureFile=new File(getFilesDir(),pictureFileName);
                 Drawable drawable = Drawable.createFromPath(pictureFile.getAbsolutePath());
                 mSaveOutImageView.setImageDrawable(drawable);
@@ -58,25 +58,18 @@ public class MainSaveActivity extends AppCompatActivity {
         mSaveOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveDataToDb();//(5) ออกข้อสอบ
+                saveDataToDb();
                 setResult(RESULT_OK);//(8)
-
-                //(9)ถ้ามีการส่งข้อมูลอื่นๆจากปลายทางไปต้นทางด้วย
-            /*Intent intent = new Intent();
-            intent.putExtra(//อะไรสักอย่าง);
-            setResult(RESULT_OK,intent);
-            */
                 finish();
             }
         });
 
 
     }
-    //(5)
     private void saveDataToDb() {
         String title = mTitleOutEditText.getText().toString();
         String number = mNumberOutEditText.getText().toString();
-        Intent intent = getIntent();//getอินเทนที่ส่งมาจากหน้าก่อนหน้านี
+        Intent intent = getIntent();
         String type  = intent.getStringExtra("type");
         String pictureFileName;
         if(type.equals("1")) {
@@ -85,7 +78,6 @@ public class MainSaveActivity extends AppCompatActivity {
             pictureFileName = "ic_expense.png";
         }
 
-        //saveลงDBโดย
         ContentValues cv = new ContentValues();
         cv.put(SaveDbHelper.COL_TITLE,title);
         cv.put(SaveDbHelper.COL_NUMBER,number);
